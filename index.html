@@ -21,20 +21,23 @@
     <script src="/socket.io/socket.io.js"></script>
     <script>
       $(function() {
+        // socketのパイプを作る(それぞれはnamespace)
         const chat = io.connect('http://127.0.0.1:3000/chat'),
               news = io.connect('http://127.0.0.1:3000/news');
         $('#myForm').on('submit', function(e) {
           e.preventDefault();
+          // chat[emit_from_client]に対してjsonデータを送信する
           chat.json.emit('emit_from_client', {
             msg: $('#msg').val(),
             room: $('#rooms').val()
           });
           $('#msg').val('').focus();
-          console.log('test');
         });
+        // chatからの送信[emit_from_server]を待ち受ける
         chat.on('emit_from_server', function(data) {
           $('#logs').append($('<li>').text(data));
         });
+        // news[emit_from_server]に対して待ち受ける
         news.on('emit_from_server', function(data) {
           $('#news').text(data);
         });
